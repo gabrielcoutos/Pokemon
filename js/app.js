@@ -58,7 +58,7 @@ $(document).ready(function () {
         var limit = 20;
         if (elemento !== null) {
             var offset = (elemento - 1) * limit;
-            urlAPI += "?limit=" + limit + "&offset=" + offset;           
+            urlAPI += "?limit=" + limit + "&offset=" + offset;
         }
         $(".panel-group").empty();
         $.ajax({
@@ -92,26 +92,69 @@ $(document).ready(function () {
 
     $(document).on('click', '.page-link', function () {
         var pagina = $(this).text();
+        $('li').each(function (index) {
+            $(this).removeClass("active");
+        });
         carregarElementos(pagina);
-        if(pagina===1 || pagina===3 || pagina===4){
-            $(".dot").addClass("page-link");
-            $(".dot").text("2");
-            $(".before").text("3");
-            $(".midle").text("4");               
-            $(".after").text("5");
+        console.log(pagina);
+        if (Number(pagina) === 4 || Number(pagina) === 3 || Number(pagina) === 1) {
+
+            if (Number(pagina) === 1) {
+                $("#first").parent().addClass("active");
+                alterarPaginacao();
+            }
+
+            if (Number(pagina) === 3) {
+                $(".before").parent().addClass("active");
+                alterarPaginacao();
+            }
+
+            if (Number(pagina) === 4) {
+                console.log("oi");
+                $(".midle").parent().addClass("active");
+                alterarPaginacao();
+            }
+
         }
 
-        if (pagina >= 5 && pagina<= 47) {
-            $(".dot").removeClass("page-link");
-            $(".dot").text("...");
-            var resultado = Number(pagina)+1;
-            $(".before").text(pagina-1);
-            $(".midle").text(pagina);  
-            $(".midle").parent().addClass("active");     
-            $(".after").text(resultado);
-            
+        if (Number(pagina) === 2) {
+            $(".dot").parent().addClass("active");
+        }
+
+        if (pagina >= 5 && pagina <= 48) {
+            if (Number(pagina) === 48) {
+                $("last").hide();
+                $(".dot").removeClass("page-link");
+                $(".dot").text("...");
+                var resultado = Number(pagina) + 1;
+                $(".before").text(pagina - 1);
+                $(".midle").text(pagina);
+                $(".midle").parent().addClass("active");
+                $(".after").text(resultado);
+
+            }else{
+                $("last").show();
+                $(".dot").removeClass("page-link");
+                $(".dot").text("...");
+                var resultado = Number(pagina) + 1;
+                $(".before").text(pagina - 1);
+                $(".midle").text(pagina);
+                $(".midle").parent().addClass("active");
+                $(".after").text(resultado);
+
+            }
+           
+
         }
 
     });
+
+    function alterarPaginacao() {
+        $(".dot").addClass("page-link");
+        $(".dot").text("2");
+        $(".before").text("3");
+        $(".midle").text("4");
+        $(".after").text("5");
+    }
 
 });
