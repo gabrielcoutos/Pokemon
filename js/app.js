@@ -60,7 +60,9 @@ $(document).ready(function () {
             var offset = (elemento - 1) * limit;
             urlAPI += "?limit=" + limit + "&offset=" + offset;
         }
+
         $(".panel-group").empty();
+        $("#vazio").remove();
         $.ajax({
             url: urlAPI,
             method: 'GET',
@@ -86,7 +88,12 @@ $(document).ready(function () {
                         "</div>"
                     );
                 });
+
             },
+            error: function (request, status, erro) {
+                $("#loader-starter").hide();
+                $("#pokemons").append("<h3 class='text-center' id='vazio'>Nenhum pokemon encontrado</h3>");
+            }
         });
     }
 
@@ -95,7 +102,7 @@ $(document).ready(function () {
         $('li').each(function (index) {
             $(this).removeClass("active");
         });
-        carregarElementos(pagina);
+        carregarElementos(pagina, null);
         console.log(pagina);
         if (Number(pagina) === 4 || Number(pagina) === 3 || Number(pagina) === 1) {
 
@@ -130,9 +137,9 @@ $(document).ready(function () {
                 $(".before").text(pagina - 1);
                 $(".midle").text(pagina);
                 $(".midle").parent().addClass("active");
-                $(".after").text(resultado);
+                $(".after").text(pagina);
 
-            }else{
+            } else {
                 $("last").show();
                 $(".dot").removeClass("page-link");
                 $(".dot").text("...");
@@ -143,7 +150,7 @@ $(document).ready(function () {
                 $(".after").text(resultado);
 
             }
-           
+
 
         }
 
@@ -156,5 +163,46 @@ $(document).ready(function () {
         $(".midle").text("4");
         $(".after").text("5");
     }
+
+
+    $("#searchSubmit").click(function () {
+        var nome = $("#searchNome").val();
+        buscarPokemon(nome);
+    });
+
+    function buscarPokemon(nome) {
+        var urlAPISearch = "https://pokeapi.co/api/v2/pokemon/" + nome;
+        $(".panel-group").empty();
+        $("#vazio").remove();
+        $.ajax({
+            url: urlAPISearch,
+            method: 'GET',
+            dataType: 'JSON',
+            beforeSend: function () {
+                $("#loader-starter").show();
+            },
+            success: function (resposta, status) {
+                $("#loader-starter").hide();
+                $(".panel-group").append(
+                    "<div class=col-md-6>" +
+                    "<div class='panel panel-default'>" +
+                    " <div class='panel-heading'>" +
+                    "<h4 class='text-center panel-title'>" +
+                    "<a data-toggle='modal' data-parent='#accordion' data-target='#myModal' class='poke'>" + resposta.name +
+                    "</a>" +
+                    "</h4>" +
+                    "</div>" +
+                    "</div>"
+                );
+            },
+            error: function (request, status, erro) {
+                $("#loader-starter").hide();
+                $("#pokemons").append("<h3 class='text-center' id='vazio'>Nenhum pokemon encontrado</h3>");
+            }
+        });
+
+    }
+
+
 
 });
