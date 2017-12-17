@@ -17,6 +17,16 @@
       <div class="col-md-12">
         <h2 class="text-center">Bem vindo pokemaniaco</h2>
       </div>
+      <div class="col-md-12">
+        <div class="text-center">
+          <label class="radio-inline">
+            <input type="radio" name="optradio" checked="" id="pokemonSelect">Pokemon
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="optradio" id="itemSelect">Item
+          </label>
+        </div>
+      </div>
       <div class="row">
         <div class="col-md-12">
           <form class="form-group">
@@ -93,17 +103,17 @@
 
               </div>
               <div class="col-md-5">
-                <P id="modal-habilidades">Habilidades: </P>
+                <P id="modal-habilidades"> </P>
               </div>
             </div>
             <div class="row">
-              <div class="col-md-4">
-                <p id="modal-tipo">Tipo: </p>
+              <div class="col-md-4" id="modal-tipo">
+                
               </div>
             </div>
-            <div class="row estatistica">
+            <div class="row estatistica" id="estatistica">
               <div id="modal-estatistica">
-                <h6>stats:</h6>
+                <h6></h6>
               </div>
             </div>
             <div class="row">
@@ -123,7 +133,8 @@
   </div>
 
   <script src="js/jquery.min.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/appPokemon.js"></script>
+  <script src="js/appItem.js"></script>
   <script src="js/bootstrap.min.js"></script>
 </body>
 

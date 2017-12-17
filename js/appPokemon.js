@@ -2,13 +2,24 @@ $(document).ready(function () {
     $("#loader-starter").hide();
     $("#loader-modal").hide();
     carregarElementos(null);
+    $('.pagination').hide();
+    $(document).on('click', '#itemSelect', function () {
+        carregarElementos(null);
+        resetarPaginacao();
+    });
+    $(document).on('click', '#pokemonSelect', function () {
+        carregarElementos(null);
+        resetarPaginacao();
+        $("#estatistica").show();
 
+    });
 
 
     $(document).on('click', ".poke", function () {
+        var urlAPI = defineURL();
         var nome = $(this).text() + "/";
         $.ajax({
-            url: "https://pokeapi.co/api/v2/pokemon/" + nome,
+            url: urlAPI + nome,
             method: 'GET',
             dataType: 'JSON',
             beforeSend: function () {
@@ -19,42 +30,27 @@ $(document).ready(function () {
                 $("#loader-modal").hide();
                 $("#corpo").show();
                 $("#modal-nome").text(pokemon.name);
-                $("#modal-imagem").append("<img src='" + pokemon.sprites.front_default + "' class='img-rounded'>");
-                console.log(pokemon);
-                console.log(pokemon.name);
-                $.each(pokemon.types, function (index, value) {
-                    $("#modal-tipo").append(value.type.name + "/");
-                });
-                $("#modal-habilidades").append("<h6>Abilities: </h6>");
-                $.each(pokemon.abilities, function (index, value) {
-                    $("#modal-habilidades").append(value.ability.name + " / ");
-                });
-                $("#modal-estatistica").append("<h6>Stats: </h6>");
-                $("#modal-estatistica").append("<div class='col-md-3'>" +
-                    "<p >weight:" + pokemon.weight + "</p>" +
-                    "</div>");
-                $.each(pokemon.stats, function (index, value) {
-                    $("#modal-estatistica").append("<div class='col-md-3'>" +
-                        "<p>" + value.stat.name + ": " + value.base_stat + "</p>" +
-                        "</div>");
-                });
-                $("#moves").append("<h6>Moves: </h6>");
-                $.each(pokemon.moves, function (index, value) {
-                    $("#moves").append(value.move.name + " / ");
-                });
+                if ($("#pokemonSelect").prop("checked")) {
+                    modalPokemon(pokemon);
+
+                } else {
+                    modalItem(pokemon);
+                }
 
             }
 
         });
+        $("#modal-tipo").empty();
         $("#moves").empty();
         $("#modal-habilidades").empty();
         $("#modal-estatistica").empty();
-        $("#modal-tipo").text("Tipo:");
         $("#modal-imagem").empty();
     });
 
     function carregarElementos(elemento) {
-        var urlAPI = "https://pokeapi.co/api/v2/pokemon/";
+        var urlAPI = defineURL();
+
+
         var limit = 20;
         if (elemento !== null) {
             var offset = (elemento - 1) * limit;
@@ -72,6 +68,7 @@ $(document).ready(function () {
             },
             success: function (resposta, status) {
                 $("#loader-starter").hide();
+                $('.pagination').show();
                 console.log(resposta);
                 var maximoPagina = Math.ceil(resposta.count / limit);
                 $("#ultimo").text(maximoPagina);
@@ -102,7 +99,7 @@ $(document).ready(function () {
         $('li').each(function (index) {
             $(this).removeClass("active");
         });
-        carregarElementos(pagina, null);
+        carregarElementos(pagina);
         console.log(pagina);
         if (Number(pagina) === 4 || Number(pagina) === 3 || Number(pagina) === 1) {
 
@@ -164,10 +161,26 @@ $(document).ready(function () {
         $(".after").text("5");
     }
 
+    function resetarPaginacao() {
+
+        $('li').each(function (index) {
+            $(this).removeClass("active");
+        });
+        $("#first").parent().addClass("active");
+        alterarPaginacao();
+    }
+
 
     $("#searchSubmit").click(function () {
         var nome = $("#searchNome").val();
-        buscarPokemon(nome);
+        if (nome.trim() !== "" && nome !== undefined) {
+            console.log("oi");
+            console.log(nome);
+            buscarPokemon(nome);
+        } else {
+            carregarElementos(null);
+        }
+
     });
 
     function buscarPokemon(nome) {
@@ -201,6 +214,58 @@ $(document).ready(function () {
             }
         });
 
+    }
+    function defineURL() {
+        var url;
+        if ($("#pokemonSelect").prop("checked")) {
+            url = "https://pokeapi.co/api/v2/pokemon/";
+        } else {
+            url = "https://pokeapi.co/api/v2/item/";
+        }
+        return url;
+    }
+
+    function modalPokemon(pokemon) {
+        $("#modal-imagem").append("<img src='" + pokemon.sprites.front_default + "' class='img-responsive'>");
+        console.log(pokemon);
+        console.log(pokemon.name);
+        $("#modal-tipo").append("<h4>Type: </h4>");
+        $.each(pokemon.types, function (index, value) {
+            $("#modal-tipo").append(value.type.name + "/");
+        });
+        $("#modal-habilidades").append("<h4>Abilities: </h4>");
+        $.each(pokemon.abilities, function (index, value) {
+            $("#modal-habilidades").append(value.ability.name + " / ");
+        });
+        $("#modal-estatistica").append("<h4>Stats: </h4>");
+        $("#modal-estatistica").append("<div class='col-md-3'>" +
+            "<p >weight:" + pokemon.weight + "</p>" +
+            "</div>");
+        $.each(pokemon.stats, function (index, value) {
+            $("#modal-estatistica").append("<div class='col-md-3'>" +
+                "<p>" + value.stat.name + ": " + value.base_stat + "</p>" +
+                "</div>");
+        });
+        $("#moves").append("<h4>Moves: </h4>");
+        $.each(pokemon.moves, function (index, value) {
+            $("#moves").append(value.move.name + " / ");
+        });
+
+    }
+
+    function modalItem(item) {
+        $("#modal-imagem").append("<img src='" + item.sprites.default + "' class='img-rounded'>");
+        $("#modal-habilidades").append("<h4>Attributes: </h4>");
+        $("#estatistica").hide();
+        $.each(item.attributes, function (index, value) {
+            $("#modal-habilidades").append(value.name + " / ");
+        });
+        $("#modal-tipo").append("<h4>Category: </h4>");
+        $("#modal-tipo").append(item.category.name);
+        $("#moves").append("<h4>Cost: </h4>");
+        $("#moves").append("<div class='col-md-3'>" +
+            "<p >weight:" + item.cost + "</p>" +
+            "</div>");
     }
 
 
