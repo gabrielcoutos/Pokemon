@@ -17,7 +17,7 @@ $(document).ready(function () {
 
     $(document).on('click', ".poke", function () {
         var urlAPI = defineURL();
-        var nome = $(this).text() + "/";
+        var nome = $(this).text() + "/";        
         $.ajax({
             url: urlAPI + nome,
             method: 'GET',
@@ -33,6 +33,7 @@ $(document).ready(function () {
                 if ($("#pokemonSelect").prop("checked")) {
                     modalPokemon(pokemon);
 
+
                 } else {
                     modalItem(pokemon);
                 }
@@ -40,6 +41,7 @@ $(document).ready(function () {
             }
 
         });
+        $("#modal-nome").empty();
         $("#modal-tipo").empty();
         $("#moves").empty();
         $("#modal-habilidades").empty();
@@ -78,9 +80,10 @@ $(document).ready(function () {
                         "<div class='panel panel-default'>" +
                         " <div class='panel-heading'>" +
                         "<h4 class='text-center panel-title'>" +
-                        "<a data-toggle='modal' data-parent='#accordion' data-target='#myModal' class='poke'>" + value.name +
+                        "<a data-toggle='modal' data-parent='#accordion' data-target='#myModal' class='poke btn'>" + value.name +
                         "</a>" +
                         "</h4>" +
+                        "</div>" +
                         "</div>" +
                         "</div>"
                     );
@@ -173,9 +176,7 @@ $(document).ready(function () {
 
     $("#searchSubmit").click(function () {
         var nome = $("#searchNome").val();
-        if (nome.trim() !== "" && nome !== undefined) {
-            console.log("oi");
-            console.log(nome);
+        if (nome.trim() !== "" && nome !== undefined) {           
             buscarPokemon(nome);
         } else {
             carregarElementos(null);
@@ -201,9 +202,10 @@ $(document).ready(function () {
                     "<div class='panel panel-default'>" +
                     " <div class='panel-heading'>" +
                     "<h4 class='text-center panel-title'>" +
-                    "<a data-toggle='modal' data-parent='#accordion' data-target='#myModal' class='poke'>" + resposta.name +
+                    "<a data-toggle='modal' data-parent='#accordion' data-target='#myModal' class='poke btn'>" + resposta.name +
                     "</a>" +
                     "</h4>" +
+                    "</div>" +
                     "</div>" +
                     "</div>"
                 );
@@ -219,27 +221,27 @@ $(document).ready(function () {
         var url;
         if ($("#pokemonSelect").prop("checked")) {
             url = "https://pokeapi.co/api/v2/pokemon/";
+            $("#identificador").text("Pokemon");
         } else {
             url = "https://pokeapi.co/api/v2/item/";
+            $("#identificador").text("Item");
         }
         return url;
     }
 
     function modalPokemon(pokemon) {
-        $("#modal-imagem").append("<img src='" + pokemon.sprites.front_default + "' class='img-responsive'>");
-        console.log(pokemon);
-        console.log(pokemon.name);
+        $("#modal-imagem").append("<img src='" + pokemon.sprites.front_default + "' class='img-responsive'>");       
         $("#modal-tipo").append("<h4>Type: </h4>");
         $.each(pokemon.types, function (index, value) {
-            $("#modal-tipo").append(value.type.name + "/");
+            $("#modal-tipo").append("<span> ." + value.type.name + "</span>");
         });
         $("#modal-habilidades").append("<h4>Abilities: </h4>");
         $.each(pokemon.abilities, function (index, value) {
-            $("#modal-habilidades").append(value.ability.name + " / ");
+            $("#modal-habilidades").append("<span> ." + value.ability.name + "</span>");
         });
         $("#modal-estatistica").append("<h4>Stats: </h4>");
         $("#modal-estatistica").append("<div class='col-md-3'>" +
-            "<p >weight:" + pokemon.weight + "</p>" +
+            "<p >weight: " + pokemon.weight + "</p>" +
             "</div>");
         $.each(pokemon.stats, function (index, value) {
             $("#modal-estatistica").append("<div class='col-md-3'>" +
@@ -248,7 +250,7 @@ $(document).ready(function () {
         });
         $("#moves").append("<h4>Moves: </h4>");
         $.each(pokemon.moves, function (index, value) {
-            $("#moves").append(value.move.name + " / ");
+            $("#moves").append(" <li class='list-inline-item'> ." + value.move.name + "</li>");
         });
 
     }
